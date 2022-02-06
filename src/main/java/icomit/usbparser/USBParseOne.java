@@ -52,7 +52,7 @@ public class USBParseOne {
         deviceIDArr = deviceChar.toArray(new String[0]);
  
 
-        System.out.print(deviceCountArr.length + " USB devices found " + Arrays.toString(deviceIDArr) + " Enter index of USB (0-" + (deviceCountArr.length -1)+ "):"); 
+        System.out.print(deviceCountArr.length + " USB devices found " + Arrays.toString(deviceIDArr) + " Enter index of USB (0-" + (deviceCountArr.length -1)+ "): "); 
         Scanner scanner1 = new Scanner(System.in);
         String input1;
         input1 = scanner1.nextLine();

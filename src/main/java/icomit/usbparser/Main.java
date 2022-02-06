@@ -40,11 +40,10 @@ public class Main implements Runnable
             USBParseAll.main(getAllProperties, getAllNames, threadIterator);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        System.out.println("Thread is running...");    
+        }  
     }      
 
-    public static int parseOption;
+
 
     public static void PrintResults(Process process) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -55,16 +54,11 @@ public class Main implements Runnable
         }
     }
 
+    //Set this value to 0 or 1
+    public static int parseOption = 1;
+
     public static void main( String[] args ) throws IOException
     {
-        Scanner scanner = new Scanner(System.in);
-        String input1;
-
-        System.out.print("Input 0 to Parse All Connected USB Devices | 1 to Parse One Specific USB Device (broken) "); 
-        input1 = scanner.nextLine();   
-        scanner.close();
-        parseOption = Integer.parseInt(input1);    
-        // GUInterface.main();
         switch(parseOption){
             case 0:
             RunUSBParseOne();
