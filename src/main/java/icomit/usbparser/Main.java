@@ -16,50 +16,35 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 package icomit.usbparser;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Scanner;
+public class Main implements Runnable  
+{   
+    public static int threadIterator; 
+    public void run()  
+    {    
+        try {
+            Process getSize = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Size");
+            Process getTotalSectors = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TotalSectors");
+            Process getBytesPerSector = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get BytesPerSector");
+            Process getSectorsPerTrack = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get SectorsPerTrack");
+    
+            Process getTotalHeads = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Totalheads");
+            Process getTotalCylinders = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TotalCylinders");
+    
+            Process getTotalTracks = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TotalTracks");
+            Process getTracksPerCylinder = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TracksPerCylinder");
+            Process getSignature = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Signature");
+    
+            Process[] getAllProperties = {getSize, getTotalSectors, getBytesPerSector, getSectorsPerTrack, getTotalHeads, getTotalCylinders, getTotalTracks, getTracksPerCylinder, getSignature};
+            String[]  getAllNames = {"Total Size: ", "Total Sectors: ", "Bytes per Sector: ", "SectorsPerTrack: ", "Total Heads: ", "Total Cylinders: ", "Total Tracks: ", "Tracks Per Cylinder: ", "Signature: "};
+            USBParseAll.main(getAllProperties, getAllNames, threadIterator);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Thread is running...");    
+    }      
 
-public class Main{     
-    public static void main( String[] args ) throws IOException
-    {
-
-        String[] cmds = {
-            "cmd.exe",
-            "vol",
-            "c:"
-        };
-
-        Process pr = Runtime.getRuntime().exec("wmic logicaldisk where drivetype=2 get DeviceID, VolumeName, Description");
-
-        Process getDeviceIndex = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Index");
-
-        Process getSize = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Size");
-        Process getTotalSectors = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TotalSectors");
-        Process getBytesPerSector = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get BytesPerSector");
-        Process getSectorsPerTrack = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get SectorsPerTrack");
-
-        Process getTotalHeads = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Totalheads");
-        Process getTotalCylinders = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TotalCylinders");
-
-        Process getTotalTracks = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TotalTracks");
-        Process getTracksPerCylinder = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TracksPerCylinder");
-        Process getSignature = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Signature");
-
-
-        Process[] getAllProperties = {getSize, getTotalSectors, getBytesPerSector, getSectorsPerTrack, getTotalHeads, getTotalCylinders, getTotalTracks, getTracksPerCylinder, getSignature};
-        String[]  getAllNames = {"Total Size: ", "Total Sectors: ", "Bytes per Sector: ", "SectorsPerTrack: ", "Total Heads: ", "Total Cylinders: ", "Total Tracks: ", "Tracks Per Cylinder: ", "Signature: "};
-
-
-        Process pr2 = Runtime.getRuntime().exec("wmic logicaldisk where drivetype=2 get Size");
-        Process pr3 = Runtime.getRuntime().exec("wmic logical where drivetype=2 get freeSpace");
-        Process sizeQuery = Runtime.getRuntime().exec("wmic logicaldisk where DeviceID='E:' get Size");
-
-  
-        MultiProp.GetMultipleVolumes(getAllProperties, getAllNames);
-        // GetDevice(sizeQuery);
-
-    }
+    public static int parseOption;
 
     public static void PrintResults(Process process) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -70,49 +55,52 @@ public class Main{
         }
     }
 
-    public static void GetDevice(Process process) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = "";
-        int filenum = 0;
-        Boolean runOnce = false;
-        // Long volLong = null;
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line); 
-            if(line.startsWith("1") && !runOnce){
-                // line2 = line;
-                System.out.println("volume line " + line);            
-                try {
-                    FileWriter myWriter = new FileWriter(String.format("./driveVolume_%d.txt", filenum));
-                    myWriter.write(line);
-                    myWriter.close();
-                    System.out.println("Successfully wrote to the file.");
-                    } 
-                    catch (IOException e){
-                    System.out.println("An error occurred.");
-                    e.printStackTrace();
-                } 
-            }
+    public static void main( String[] args ) throws IOException
+    {
+        Scanner scanner = new Scanner(System.in);
+        String input1;
+
+        System.out.print("Input 0 to Parse All Connected USB Devices | 1 to Parse One Specific USB Device (broken) "); 
+        input1 = scanner.nextLine();   
+        scanner.close();
+        parseOption = Integer.parseInt(input1);    
+        // GUInterface.main();
+        switch(parseOption){
+            case 0:
+            RunUSBParseOne();
+            break;
+            case 1:
+            RunUSBParseAll();
+            break;
+            default:
+            System.out.println("You did not enter a correct value.");
+            break;
         }
-        GetVolume(line, filenum);
+
 
     }
-    public static long GetVolume(String line, int filenum) throws IOException {
-        Path fileName = Paths.get(String.format("./driveVolume_%d.txt", filenum));
-	    String actual = Files.readString(fileName);
-	    System.out.println("actual" + actual);
 
-        String s = actual;
-        s = s.replaceAll("\\s", "");
+    private static void RunUSBParseOne() throws IOException {
+        USBParseOneT runnable = new USBParseOneT();
+        Thread t = new Thread(runnable);
+        t.start();
+    }
 
-        int count = 0;
-        for(int i = 0; i < s.length(); i++) {
-            if(Character.isWhitespace(s.charAt(i))) count++;
+
+    
+
+    private static void RunUSBParseAll() throws IOException{
+        Main m1=new Main();    
+        Thread t1 =new Thread(m1);    
+        t1.start();
+
+        System.out.println("dcount " + USBParseAll.GetDeviceCount());
+        for(int i=0; i< USBParseAll.GetDeviceCount(); i++){
+            threadIterator++;
+            Main m=new Main();    
+            Thread t =new Thread(m);    
+            t.start();
         }
-        System.out.println("Whitespace " + count);
-
-        long ls = Long.valueOf(s);
-        System.out.println("ls" + ls);
-        return ls;
     }
 
 }
