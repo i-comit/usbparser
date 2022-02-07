@@ -41,6 +41,7 @@ public class Main implements Runnable
         } catch (IOException e) {
             e.printStackTrace();
         }  
+        System.out.println("Thread running...");
     }      
 
 
@@ -88,7 +89,7 @@ public class Main implements Runnable
         Thread t1 =new Thread(m1);    
         t1.start();
 
-        System.out.println("dcount " + USBParseAll.GetDeviceCount());
+        // System.out.println("dcount " + USBParseAll.GetDeviceCount());
         for(int i=0; i< USBParseAll.GetDeviceCount(); i++){
             threadIterator++;
             Main m=new Main();    

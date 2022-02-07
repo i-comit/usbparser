@@ -59,7 +59,7 @@ public class USBParseAll {
     }
 
     public static String GetDeviceID(String[] deviceIDArr, int index) throws IOException {
-        System.out.println("Device ID: " + deviceIDArr[index]);
+        // System.out.println("Device ID: " + deviceIDArr[index]);
         return deviceIDArr[index];
     }
     public static void GetReadWriteSpeed(String[] deviceIDArr, int index) throws IOException {
@@ -71,8 +71,15 @@ public class USBParseAll {
     public static void MovePropertiesFile(int index) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("cmd.exe", "/c", "move driverproperties.txt " + GetDeviceID(deviceIDArr, index) + "/" );
-    
         Process process = processBuilder.start();
+        
+        ProcessBuilder processBuilder1 = new ProcessBuilder();
+        processBuilder1.command("cmd.exe", "/c", "xcopy Autorun.inf " + GetDeviceID(deviceIDArr, index) + " /h /y" );
+        processBuilder1.start();
+
+        ProcessBuilder processBuilder2 = new ProcessBuilder();
+        processBuilder2.command("cmd.exe", "/c", "xcopy icomit.ico " + GetDeviceID(deviceIDArr, index) + " /h /y" );
+        processBuilder2.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line = "";
         // ArrayList<String> selectedLines = new ArrayList<String>();
@@ -105,7 +112,7 @@ public class USBParseAll {
                 fw.write(processName[j] + selectedLines.get(mainindex) + "\n");
                 // GetReadWriteSpeed(deviceIDArr, index);
             }
-            fw.write("\nOSS -> github.com/i-comit/icomit-usbparser");
+            fw.write("\ngithub.com/i-comit/icomit-usbparser");
             fw.close();
             MovePropertiesFile(mainindex);
         }

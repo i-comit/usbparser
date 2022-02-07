@@ -63,7 +63,7 @@ public class USBParseOne {
     }
 
     public static String GetDeviceID(String[] deviceIDArr, int index) throws IOException {
-        // System.out.println("Device ID: " + deviceIDArr[i]);
+        System.out.println("Device ID: " + deviceIDArr[index]);
         return deviceIDArr[index];
     }
     public static void GetReadWriteSpeed(String[] deviceIDArr, int index) throws IOException {
@@ -75,19 +75,15 @@ public class USBParseOne {
     public static void MovePropertiesFile(int index) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("cmd.exe", "/c", "move driverproperties.txt " + GetDeviceID(deviceIDArr, index) + "/" );
-    
-        Process process = processBuilder.start();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = "";
-        // ArrayList<String> selectedLines = new ArrayList<String>();
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line); 
-            // if(line.matches("^[0-9].*")){
-            //     line = line.replaceAll("\\s", "");
-            //     selectedLines.add(line);
-            // }
+        processBuilder.start();
+        
+        ProcessBuilder processBuilder1 = new ProcessBuilder();
+        processBuilder1.command("cmd.exe", "/c", "xcopy Autorun.inf " + GetDeviceID(deviceIDArr, index) + " /h /y" );
+        processBuilder1.start();
 
-        }
+        ProcessBuilder processBuilder2 = new ProcessBuilder();
+        processBuilder2.command("cmd.exe", "/c", "xcopy icomit.ico " + GetDeviceID(deviceIDArr, index) + " /h /y" );
+        processBuilder2.start();
     }
 
     public static void main(Process[] process, String[] processName) throws IOException {
@@ -108,7 +104,7 @@ public class USBParseOne {
             fw.write(processName[i] + selectedLines.get(index) + "\n");
             // GetReadWriteSpeed(deviceIDArr, index);
         }
-        fw.write("\nOSS -> github.com/i-comit/icomit-usbparser");
+        fw.write("\ngithub.com/i-comit/icomit-usbparser");
         fw.close();
         MovePropertiesFile(index);
     }
