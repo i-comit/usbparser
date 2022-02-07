@@ -1,4 +1,4 @@
-/**
+/*
 Copyright 2022 Khiem G Luong
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files 
@@ -17,6 +17,8 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 package icomit.usbparser;
 import java.io.*;
 import java.util.Scanner;
+
+
 public class Main implements Runnable  
 {   
     public static int threadIterator; 
@@ -41,10 +43,11 @@ public class Main implements Runnable
         } catch (IOException e) {
             e.printStackTrace();
         }  
-        System.out.println("Thread running...");
+        System.out.println("Parsing USB Device " + USBParseAll.staticDeviceID + "...");
     }      
 
-
+    //Set this value to 0 or 1
+    public static int parseOption = 1;
 
     public static void PrintResults(Process process) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -55,34 +58,11 @@ public class Main implements Runnable
         }
     }
 
-    //Set this value to 0 or 1
-    public static int parseOption = 1;
-
-    public static void main( String[] args ) throws IOException
-    {
-        switch(parseOption){
-            case 0:
-            RunUSBParseOne();
-            break;
-            case 1:
-            RunUSBParseAll();
-            break;
-            default:
-            System.out.println("You did not enter a correct value.");
-            break;
-        }
-
-
-    }
-
     private static void RunUSBParseOne() throws IOException {
         USBParseOneT runnable = new USBParseOneT();
         Thread t = new Thread(runnable);
         t.start();
     }
-
-
-    
 
     private static void RunUSBParseAll() throws IOException{
         Main m1=new Main();    
@@ -95,7 +75,40 @@ public class Main implements Runnable
             Main m=new Main();    
             Thread t =new Thread(m);    
             t.start();
+            // System.out.println("DevuceUD from USBParseAll" + USBParseAll.staticDeviceID);
+
         }
     }
+    public static final Scanner in = new Scanner(System.in);
+    public static void main( String[] args ) throws IOException
+    {
+        System.out.print("INPUT 0 to parse ALL USBs | INPUT 1 to parse ONE USB: ");
+        String input1;
+        input1 = in.nextLine();
+        parseOption = Integer.parseInt(input1);
+        // Process format1drive = Runtime.getRuntime().exec("format " + USBParseOne.staticDeviceID +" /q /fs:NTFS /p:1 /v:");
+        // try {
+        //     format1drive.waitFor();
+        // } catch (InterruptedException e) {
+        //     e.printStackTrace();
+        // }
+        // PrintResults(format1drive);
+        // if(format1drive.isAlive()){
+        //     return;
+        // }
+        // else{
+        // }
+        switch(parseOption){
+            case 0:
+            RunUSBParseAll();
+            break;
+            case 1:
+            RunUSBParseOne();
+            break;
+            default:
+            System.out.println("You did not enter a correct value.");
+            break;
+        }   
 
+    }
 }

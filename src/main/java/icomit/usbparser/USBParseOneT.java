@@ -25,5 +25,6 @@ public class USBParseOneT implements Runnable
         } catch (IOException e) {
             e.printStackTrace();
         }  
+        System.out.println("Parsing USB Device " + USBParseOne.staticDeviceID + "...");
     }   
 }   

@@ -1,13 +1,15 @@
 package icomit.usbparser;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
+import java.util.Date;
 
 public class USBParseOne {
 
     public static int index;
     public static String[] deviceIDArr;
+    public static String staticDeviceID;
 
     public static int GetDeviceCount() throws IOException {
         Process pr = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Index");
@@ -51,19 +53,19 @@ public class USBParseOne {
         
         deviceIDArr = deviceChar.toArray(new String[0]);
  
-
         System.out.print(deviceCountArr.length + " USB devices found " + Arrays.toString(deviceIDArr) + " Enter index of USB (0-" + (deviceCountArr.length -1)+ "): "); 
-        Scanner scanner1 = new Scanner(System.in);
         String input1;
-        input1 = scanner1.nextLine();
+        input1 = Main.in.nextLine();
         
-        scanner1.close();
+        Main.in.close();
         index = Integer.parseInt(input1);
+        
         return index; 
     }
 
     public static String GetDeviceID(String[] deviceIDArr, int index) throws IOException {
-        System.out.println("Device ID: " + deviceIDArr[index]);
+        // System.out.println("Device ID: " + deviceIDArr[index]);
+        staticDeviceID = deviceIDArr[index];
         return deviceIDArr[index];
     }
     public static void GetReadWriteSpeed(String[] deviceIDArr, int index) throws IOException {
@@ -82,14 +84,16 @@ public class USBParseOne {
         processBuilder1.start();
 
         ProcessBuilder processBuilder2 = new ProcessBuilder();
-        processBuilder2.command("cmd.exe", "/c", "xcopy Driver.ico " + GetDeviceID(deviceIDArr, index) + " /h /y" );
+        processBuilder2.command("cmd.exe", "/c", "xcopy Driver.ico " + GetDeviceID(deviceIDArr, index) + " /h /y /n" );
         processBuilder2.start();
     }
 
     public static void main(Process[] process, String[] processName) throws IOException {
         index = GetDeviceCount();
         FileWriter fw = new FileWriter("driverproperties.txt");
-        fw.write("i-SECURE" + "\n\n");
+        SimpleDateFormat formatter= new SimpleDateFormat("MM/dd/yyyy 'at' HH:mm z");
+        Date date = new Date(System.currentTimeMillis());
+        fw.write("i-SECURE" + "| Parsed " + formatter.format(date) + "\n\n");
         for (int i = 0; i < process.length; i++){
             BufferedReader reader = new BufferedReader(new InputStreamReader(process[i].getInputStream()));
             String line = "";
