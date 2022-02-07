@@ -78,7 +78,7 @@ public class USBParseAll {
         processBuilder1.start();
 
         ProcessBuilder processBuilder2 = new ProcessBuilder();
-        processBuilder2.command("cmd.exe", "/c", "xcopy icomit.ico " + GetDeviceID(deviceIDArr, index) + " /h /y" );
+        processBuilder2.command("cmd.exe", "/c", "xcopy Driver.ico " + GetDeviceID(deviceIDArr, index) + " /h /y" );
         processBuilder2.start();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line = "";
