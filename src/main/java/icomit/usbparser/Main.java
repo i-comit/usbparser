@@ -34,14 +34,14 @@ public class Main
     private static void RunUSBParse0() throws IOException{
         switch(OSInt) {
             case 0:
-            usbparser.windows.USBParse0T runnable0 = new usbparser.windows.USBParse0T();
-            runnable0.threadIterator = 0; 
-            Thread t1 =new Thread(runnable0);    
+            usbparser.windows.USBParse0T runnableWindows = new usbparser.windows.USBParse0T();
+            runnableWindows.threadIterator = 0; 
+            Thread t1 =new Thread(runnableWindows);    
             t1.start();
     
             for(int i=0; i< usbparser.windows.USBParse0.GetDeviceCount(); i++){
-                runnable0.threadIterator++;
-                Thread t =new Thread(runnable0);    
+                runnableWindows.threadIterator++;
+                Thread t =new Thread(runnableWindows);    
                 t.start();
             }
             break;
@@ -63,10 +63,16 @@ public class Main
     private static void RunUSBParse1() throws IOException {
         switch(OSInt) {
             case 0:
-            usbparser.windows.USBParse1T runnable1 = new usbparser.windows.USBParse1T();
-            Thread t = new Thread(runnable1);
-            t.start();
+            usbparser.windows.USBParse1T runnableWindows = new usbparser.windows.USBParse1T();
+            Thread tWindows = new Thread(runnableWindows);
+            tWindows.start();
             break;
+            case 1:
+            usbparser.linux.USBParse1T runnableLinux = new usbparser.linux.USBParse1T();
+            Thread tLinux = new Thread(runnableLinux);
+            tLinux.start();        
+            break;
+                
         }
     }
 

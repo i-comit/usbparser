@@ -1,32 +1,60 @@
 package usbparser.linux;
-
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //Thread class for parsing
 
 public class USBParse1T implements Runnable  
 {   
+    public static String drivePath;
+    public static String fileSystem;
+    public static String driveSize;
+    public int threadIterator; 
     public void run()  
     {    
+
+        //grep finds all mount points starting with sdb (USBs)
+        //Because sgdisk apparently doesn't work.
+        String[] cmd1 = new String[] {"bash", "-c", " df -Th | grep sdb"};
+        String[] cmd2 = new String[] {"bash", "-c", " lsblk | grep sdb"};
         try {
-            Process getSize = Runtime.getRuntime().exec("wmic logicaldisk where drivetype=2 get Size");
-            Process getTotalSectors = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TotalSectors");
-            Process getBytesPerSector = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get BytesPerSector");
-            Process getSectorsPerTrack = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get SectorsPerTrack");
-    
-            Process getTotalHeads = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Totalheads");
-            Process getTotalCylinders = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TotalCylinders");
-    
-            Process getTotalTracks = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TotalTracks");
-            Process getTracksPerCylinder = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get TracksPerCylinder");
-            Process getSignature = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Signature");
-    
-            Process[] getAllProperties = {getSize, getTotalSectors, getBytesPerSector, getSectorsPerTrack, getTotalHeads, getTotalCylinders, getTotalTracks, getTracksPerCylinder, getSignature};
-            String[]  getAllNames = {"Total Size: ", "Total Sectors: ", "Bytes per Sector: ", "SectorsPerTrack: ", "Total Heads: ", "Total Cylinders: ", "Total Tracks: ", "Tracks Per Cylinder: ", "Signature: "};
-            USBParse1.main(getAllProperties, getAllNames);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }  
-        System.out.println("USB Device " + USBParse1.staticDeviceID + " Parsed.\n");
-    }   
+            System.out.println("");
+            Process proc1 = new ProcessBuilder(cmd1).start();
+            PrintFileSystem(proc1);
+
+            Process proc2 = new ProcessBuilder(cmd2).start();
+            PrintSize(proc2);
+        } catch (IOException ex) {
+            Logger.getLogger(USBParse0T.class.getName()).log(Level.ALL, null, ex);
+        }	
+    } 
+   
+    public static void PrintFileSystem(Process process) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line = "";
+        while ((line = reader.readLine()) != null) {
+            drivePath = line.substring(0,14);
+            System.out.println("DrivePath: " + drivePath);
+            fileSystem = line.substring(15, 20);
+            System.out.println("FileSystem: " + fileSystem);   
+        }
+    }
+
+    public static void PrintSize(Process process) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line = "";
+        Boolean runOnce = false;
+        while ((line = reader.readLine()) != null) {
+            //System.out.println(line);
+            if(!runOnce){
+                driveSize = line.substring(24, 29);
+                System.out.println("Drive Size: " + driveSize);   
+                runOnce = true;
+            }
+
+        }
+    } 
 }   
