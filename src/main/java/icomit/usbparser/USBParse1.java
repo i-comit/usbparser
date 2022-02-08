@@ -5,57 +5,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-public class USBParseOne {
+//This class implements the scanner object from Main.java in order for the user to select a specific USB for parsing.
+
+public class USBParse1 {
 
     public static int index;
+    public static String deviceSize;
     public static String[] deviceIDArr;
     public static String staticDeviceID;
 
     public static int GetDeviceCount() throws IOException {
-        Process pr = Runtime.getRuntime().exec("wmic diskdrive where InterfaceType='USB' get Index");
+        Process pr = Runtime.getRuntime().exec("wmic logicaldisk where drivetype=2 get DeviceID");
         BufferedReader reader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
         String line = "";
         ArrayList<String> deviceCount = new ArrayList<String>();
+
         while ((line = reader.readLine()) != null) {
-            if(line.matches("^[0-9].*")){
-                line = line.replaceAll("\\s", "");
+            line = line.replaceAll("\\s", "");
+            if(line.endsWith(":")){
                 deviceCount.add(line);
             }
         }
         String[] deviceCountArr = deviceCount.toArray(new String[0]);
-        String[] letterIndice = {"A", "B", "C", "D", "E", "F", "G"};
-
-        ArrayList<String> deviceChar = new ArrayList<String>();
-        for (int i = 0; i < deviceCountArr.length; i++) {
-            if(Integer.parseInt(deviceCountArr[i]) == 0) {
-                deviceChar.add(letterIndice[0] + ":");
-            } 
-            if(Integer.parseInt(deviceCountArr[i]) == 1){
-                deviceChar.add(letterIndice[1]);
-            } 
-            if(Integer.parseInt(deviceCountArr[i]) == 2){
-                deviceChar.add(letterIndice[2] + ":");
-            } 
-            if(Integer.parseInt(deviceCountArr[i]) == 3){
-                deviceChar.add(letterIndice[3] + ":");
-            } 
-            if(Integer.parseInt(deviceCountArr[i]) == 4){
-                deviceChar.add(letterIndice[4] + ":");
-            } 
-            if(Integer.parseInt(deviceCountArr[i]) == 5){
-                deviceChar.add(letterIndice[5] + ":");
-            }  
-            if(Integer.parseInt(deviceCountArr[i]) == 6){
-                // System.out.println("Matched Char " + letterIndice[6]);
-                deviceChar.add(letterIndice[6] + ":");
-            } 
-        }
-        
-        deviceIDArr = deviceChar.toArray(new String[0]);
- 
-        System.out.print(deviceCountArr.length + " USB devices found " + Arrays.toString(deviceIDArr) + " Enter index of USB (0-" + (deviceCountArr.length -1)+ "): "); 
-        String input1;
-        input1 = Main.in.nextLine();
+        deviceIDArr = deviceCountArr;
+        System.out.println("DeviceIDaArr " + Arrays.toString(deviceIDArr));
+        System.out.print(deviceCountArr.length + " USB devices found " + Arrays.toString(deviceCountArr) + " Enter index of USB (0-" + (deviceCountArr.length -1)+ "): "); 
+        String input1 = Main.in.nextLine();
         
         Main.in.close();
         index = Integer.parseInt(input1);
@@ -74,7 +49,7 @@ public class USBParseOne {
         // Process process = processBuilder.start();
     }
 
-    public static void MovePropertiesFile(int index) throws IOException {
+    public static void MoveDataToDrive(int index) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("cmd.exe", "/c", "move driverproperties.txt " + GetDeviceID(deviceIDArr, index) + "/" );
         processBuilder.start();
@@ -86,6 +61,18 @@ public class USBParseOne {
         ProcessBuilder processBuilder2 = new ProcessBuilder();
         processBuilder2.command("cmd.exe", "/c", "xcopy Driver.ico " + GetDeviceID(deviceIDArr, index) + " /h /y /n" );
         processBuilder2.start();
+
+        // ProcessBuilder processBuilder3 = new ProcessBuilder();
+        // processBuilder3.command("cmd.exe", "/c", "runas /profile /user:administrator /savecred \"mountvol " + staticDeviceID + " /p\"" );
+        // processBuilder3.start();
+    }
+
+    public static String ConvertToGB(String deviceSize) throws IOException {
+        deviceSize = deviceSize.replaceAll("\\s", "");
+        Long sizeLong = Long.parseLong(deviceSize);
+        Long gigaByte = 1024L*1024L*1024L;
+        String GB = String.valueOf(sizeLong/gigaByte);
+        return GB;
     }
 
     public static void main(Process[] process, String[] processName) throws IOException {
@@ -93,6 +80,8 @@ public class USBParseOne {
         FileWriter fw = new FileWriter("driverproperties.txt");
         SimpleDateFormat formatter= new SimpleDateFormat("MM/dd/yyyy 'at' HH:mm z");
         Date date = new Date(System.currentTimeMillis());
+
+        Boolean deviceSizeBool = false;
         fw.write("i-SECURE" + "| Parsed " + formatter.format(date) + "\n\n");
         for (int i = 0; i < process.length; i++){
             BufferedReader reader = new BufferedReader(new InputStreamReader(process[i].getInputStream()));
@@ -105,11 +94,17 @@ public class USBParseOne {
                     selectedLines.add(line);
                 }
             }
+            if(!deviceSizeBool){
+                // System.out.println("deviceSize" + "=" + selectedLines.get(index));
+                fw.write("Usable Space (in GBs): " + ConvertToGB(selectedLines.get(index)) + "\n\n");
+                deviceSizeBool = true;
+            }
             fw.write(processName[i] + selectedLines.get(index) + "\n");
             // GetReadWriteSpeed(deviceIDArr, index);
         }
         fw.write("\ngithub.com/i-comit/icomit-usbparser");
         fw.close();
-        MovePropertiesFile(index);
+        MoveDataToDrive(index);
+        System.out.println("Parsing USB Device " + staticDeviceID + " ..");
     }
 }
