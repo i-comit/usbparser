@@ -25,3 +25,8 @@ Will also change the drive icon, and a user can easily change the image to one o
 granted it is an .ico filed named Driver.ico<br>
 
 A GUI is probably not necessary, but I would like to develop one eventually. <br>
+
+## Running the app:
+
+1. Clone or fork this repository
+2. Click on runjar.bat

@@ -12,6 +12,7 @@
 
 # Package Files #
 *.jar
+!icomit-usbparser.jar
 *.war
 *.nar
 *.ear
