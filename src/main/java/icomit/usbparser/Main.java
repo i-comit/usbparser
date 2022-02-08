@@ -63,7 +63,7 @@ public class Main
     private static void RunUSBParse1() throws IOException {
         switch(OSInt) {
             case 0:
-            USBParse1T runnable1 = new USBParse1T();
+            usbparser.windows.USBParse1T runnable1 = new usbparser.windows.USBParse1T();
             Thread t = new Thread(runnable1);
             t.start();
             break;
@@ -110,6 +110,5 @@ public class Main
             System.out.println("You did not enter a correct value.");
             break;
         }   
-
     }
 }

@@ -1,4 +1,4 @@
-# i-COMIT | USB PARSER
+# i-COMIT | USB PARSER | ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white)
 Terminal based app which parses USB devices and returns hardware information to the USB device via wmic. <br>
 
 
@@ -26,8 +26,12 @@ granted it is an .ico filed named Driver.ico<br>
 
 A GUI is probably not necessary, but I would like to develop one eventually. <br>
 
-## Running the app:
-
+## Installation :
+<br><br>
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 1. Clone or fork this repository
 2. Click on runjar.bat
-=======
+
+<br><br>
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+1. Nothing right now.

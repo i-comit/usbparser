@@ -1,4 +1,5 @@
-package icomit.usbparser;
+package usbparser.windows;
+
 import java.io.IOException;
 
 //Thread class for parsing

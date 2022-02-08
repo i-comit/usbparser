@@ -1,4 +1,6 @@
-package icomit.usbparser;
+package usbparser.linux;
+
+import icomit.usbparser.Main;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
