@@ -1,4 +1,4 @@
-# icomit-usbparser
+# i-COMIT | USB PARSER
 Terminal based app which Parses USB devices and returns hardware information to the USB device via wmic. <br>
 
 
