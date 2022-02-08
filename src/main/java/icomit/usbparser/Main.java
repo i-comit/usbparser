@@ -18,11 +18,10 @@ package icomit.usbparser;
 import java.io.*;
 import java.util.Scanner;
 
-
 public class Main
 {   
     public static int parseOption;
-
+    public static int OSInt;
 
     public static void PrintResults(Process process) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -33,27 +32,44 @@ public class Main
     }
 
     private static void RunUSBParse0() throws IOException{
-        USBParse0T runnable0 = new USBParse0T();
-        runnable0.threadIterator = 0; 
-        Thread t1 =new Thread(runnable0);    
-        t1.start();
-
-        for(int i=0; i< USBParse0.GetDeviceCount(); i++){
-            runnable0.threadIterator++;
-            Thread t =new Thread(runnable0);    
-            t.start();
+        switch(OSInt) {
+            case 0:
+            usbparser.windows.USBParse0T runnable0 = new usbparser.windows.USBParse0T();
+            runnable0.threadIterator = 0; 
+            Thread t1 =new Thread(runnable0);    
+            t1.start();
+    
+            for(int i=0; i< usbparser.windows.USBParse0.GetDeviceCount(); i++){
+                runnable0.threadIterator++;
+                Thread t =new Thread(runnable0);    
+                t.start();
+            }
+            break;
+            case 1:
+            break;
         }
     }
 
     private static void RunUSBParse1() throws IOException {
-        USBParse1T runnable1 = new USBParse1T();
-        Thread t = new Thread(runnable1);
-        t.start();
+        switch(OSInt) {
+            case 0:
+            USBParse1T runnable1 = new USBParse1T();
+            Thread t = new Thread(runnable1);
+            t.start();
+            break;
+        }
     }
 
     public static final Scanner in = new Scanner(System.in);
     public static void main( String[] args ) throws IOException
     {
+        String OSString = System.getProperty("os.name");
+        if(OSString.startsWith("Windows")){
+            OSInt = 0;
+        }
+        if(OSString.startsWith("Linux")){
+            OSInt = 1;
+        }
 
         FileInputStream fstream = new FileInputStream("icomitascii.txt");
         BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
