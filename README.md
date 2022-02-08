@@ -1,5 +1,5 @@
 # i-COMIT | USB PARSER
-Terminal based app which Parses USB devices and returns hardware information to the USB device via wmic. <br>
+Terminal based app which parses USB devices and returns hardware information to the USB device via wmic. <br>
 
 
 ### This is a Java application, so you will require Java Runtime Environment 8. <br>
