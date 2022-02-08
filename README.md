@@ -1,5 +1,5 @@
-# icomit-usbparser
-Terminal based app which Parses USB devices and returns hardware information to the USB device via wmic. <br>
+# i-COMIT | USB PARSER
+Terminal based app which parses USB devices and returns hardware information to the USB device via wmic. <br>
 
 
 ### This is a Java application, so you will require Java Runtime Environment 8. <br>
@@ -25,8 +25,11 @@ Will also change the drive icon, and a user can easily change the image to one o
 granted it is an .ico filed named Driver.ico<br>
 
 A GUI is probably not necessary, but I would like to develop one eventually. <br>
+<<<<<<< HEAD
 
 ## Running the app:
 
 1. Clone or fork this repository
 2. Click on runjar.bat
+=======
+>>>>>>> cb5bbbd3d561ab8f5836a855e9f4f3d63820bdcd
