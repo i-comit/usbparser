@@ -46,6 +46,16 @@ public class Main
             }
             break;
             case 1:
+            usbparser.linux.USBParse0T runnableLinux = new usbparser.linux.USBParse0T();
+            runnableLinux.threadIterator = 0; 
+            Thread tLinux =new Thread(runnableLinux);    
+            tLinux.start();
+    
+            for(int i=0; i< usbparser.linux.USBParse0.GetDeviceCount(); i++){
+                runnableLinux.threadIterator++;
+                Thread tLinux1 =new Thread(runnableLinux);    
+                tLinux1.start();
+            }
             break;
         }
     }
@@ -64,11 +74,14 @@ public class Main
     public static void main( String[] args ) throws IOException
     {
         String OSString = System.getProperty("os.name");
+        //System.out.println("OSString" + OSString);
         if(OSString.startsWith("Windows")){
             OSInt = 0;
         }
         if(OSString.startsWith("Linux")){
             OSInt = 1;
+            System.out.println("Linux OS active");
+            
         }
 
         FileInputStream fstream = new FileInputStream("icomitascii.txt");

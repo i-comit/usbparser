@@ -12,20 +12,21 @@ public class USBParse0 {
     public static String staticDeviceID;
 
     public static int GetDeviceCount() throws IOException {
-        Process pr = Runtime.getRuntime().exec("wmic logicaldisk where drivetype=2 get DeviceID");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(pr.getInputStream()));
-        String line = "";
+        String[] cmd = {"/bin/bash","-c","echo password| sudo -S ls"};
+        Process pb = Runtime.getRuntime().exec(cmd);
         ArrayList<String> deviceCount = new ArrayList<String>();
-
-        while ((line = reader.readLine()) != null) {
+        String line;
+        BufferedReader input = new BufferedReader(new InputStreamReader(pb.getInputStream()));
+        while ((line = input.readLine()) != null) {
             line = line.replaceAll("\\s", "");
-            if(line.endsWith(":")){
+            if(line.endsWith("Flash Drive")){
                 deviceCount.add(line);
             }
         }
-        String[] deviceCountArr = deviceCount.toArray(new String[0]);
-        deviceIDArr = deviceCountArr;
-        int dcount = deviceCountArr.length -1;
+
+        //String[] deviceCountArr = deviceCount.toArray(new String[0]);
+        //deviceIDArr = deviceCountArr;
+        int dcount = 1;
         return dcount; 
     }
 
