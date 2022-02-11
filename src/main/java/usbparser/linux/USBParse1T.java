@@ -12,7 +12,6 @@ public class USBParse1T implements Runnable
     public static String drivePath;
     public static String fileSystem;
     public static String driveSize;
-    public int threadIterator; 
     public void run()  
     {    
 
@@ -40,6 +39,9 @@ public class USBParse1T implements Runnable
             System.out.println("DrivePath: " + drivePath);
             fileSystem = line.substring(15, 20);
             System.out.println("FileSystem: " + fileSystem);   
+        }
+        if(line ==  null){
+            System.out.println("No USB Devices Found");
         }
     }
 
