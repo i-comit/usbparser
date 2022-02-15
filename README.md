@@ -34,4 +34,4 @@ A GUI is probably not necessary, but I would like to develop one eventually. <br
 
 <br><br>
 ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-1. Nothing right now. However you can see the file path, filesystem and drive size by choosing Option 1.
+1. Only Option 1 (parse specific drive) works at the moment.
