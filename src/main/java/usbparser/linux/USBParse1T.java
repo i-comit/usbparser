@@ -13,6 +13,7 @@ public class USBParse1T implements Runnable
 {   
     public static String[] deviceCountArr;
     public static String drivePath;
+    public static String mountPoint;
     public static String fileSystem;
     public static String driveSize;
     public void run()  
@@ -32,7 +33,7 @@ public class USBParse1T implements Runnable
         while ((line = reader.readLine()) != null) {
             drivePath = line.substring(0,14);
             System.out.println("DrivePath: " + drivePath);
-            fileSystem = line.substring(15, 20);
+            fileSystem = line.substring(15, 24);
             System.out.println("FileSystem: " + fileSystem);   
             drivePath = drivePath.replaceAll("\\s", "");
             deviceCount.add(drivePath);
@@ -49,10 +50,11 @@ public class USBParse1T implements Runnable
         String line = "";
         Boolean runOnce = false;
         while ((line = reader.readLine()) != null) {
-            //System.out.println(line);
             if(!runOnce){
                 driveSize = line.substring(24, 29);
                 System.out.println("Drive Size: " + driveSize);   
+                mountPoint = line.substring(38, line.length());
+                System.out.println("Mount Point: " + mountPoint);
                 runOnce = true;
             }
 

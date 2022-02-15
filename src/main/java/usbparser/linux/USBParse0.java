@@ -8,26 +8,21 @@ import java.util.Date;
 
 public class USBParse0 {
 
+    public static int index;
     public static String[] deviceIDArr;
     public static String staticDeviceID;
 
     public static int GetDeviceCount() throws IOException {
-        String[] cmd = {"/bin/bash","-c","echo password| sudo -S ls"};
-        Process pb = Runtime.getRuntime().exec(cmd);
-        ArrayList<String> deviceCount = new ArrayList<String>();
-        String line;
-        BufferedReader input = new BufferedReader(new InputStreamReader(pb.getInputStream()));
-        while ((line = input.readLine()) != null) {
-            line = line.replaceAll("\\s", "");
-            if(line.endsWith("Flash Drive")){
-                deviceCount.add(line);
-            }
-        }
-
-        //String[] deviceCountArr = deviceCount.toArray(new String[0]);
-        //deviceIDArr = deviceCountArr;
-        int dcount = 1;
-        return dcount; 
+        String[] cmd1 = new String[] {"bash", "-c", " df -Th | grep sdb"};
+        String[] cmd2 = new String[] {"bash", "-c", " lsblk | grep sdb | grep part"};
+        Process proc1 = new ProcessBuilder(cmd1).start();
+        Process proc2 = new ProcessBuilder(cmd2).start();
+        
+        USBParse1T.PrintFileSystem(proc1);
+        USBParse1T.PrintSize(proc2);
+        index = USBParse0T.deviceCountArr.length;
+        System.out.println("deviceCount from Parse 0: " + index);
+        return index; 
     }
 
     public static String GetDeviceID(String[] deviceIDArr, int index) throws IOException {
@@ -64,35 +59,19 @@ public class USBParse0 {
         return GB;
     }
 
-    public static void main(Process[] process, String[] processName, int mainindex) throws IOException {
-        GetDeviceCount();
-        for (int i = 0; i < 1; i++){
+    public static void main() throws IOException {
+        index = GetDeviceCount();
+        for (int i = 0; i < index; i++){
             FileWriter fw = new FileWriter("driverproperties.txt");
             SimpleDateFormat formatter= new SimpleDateFormat("MM/dd/yyyy 'at' HH:mm z");
             Date date = new Date(System.currentTimeMillis());
 
             Boolean deviceSizeBool = false;
             fw.write("i-SECURE" + "| Parsed " + formatter.format(date) + "\n\n");
-            for (int j = 0; j < process.length; j++){
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process[j].getInputStream()));
-                String line = "";
-                ArrayList<String> selectedLines = new ArrayList<String>();
-                while ((line = reader.readLine()) != null) {
-                    // System.out.println(line); 
-                    if(line.matches("^[0-9].*")){
-                        line = line.replaceAll("\\s", "");
-                        selectedLines.add(line);
-                    }
-                }
-                if(!deviceSizeBool){
-                    fw.write("Usable Space (in GBs): " + ConvertToGB(selectedLines.get(mainindex)) + "\n\n");
-                    deviceSizeBool = true;
-                }
-                fw.write(processName[j] + selectedLines.get(mainindex) + "\n");
-            }
+
             fw.write("\ngithub.com/i-comit/icomit-usbparser");
             fw.close();
-            MoveDataToDrive(mainindex);
+            MoveDataToDrive(index);
             System.out.println("Parsing USB Device " + staticDeviceID + " ..");
         }
     }
